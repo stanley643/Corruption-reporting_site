@@ -6,4 +6,5 @@ class Report(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE)
+    evidence_file = models.FileField(upload_to='evidences/')
