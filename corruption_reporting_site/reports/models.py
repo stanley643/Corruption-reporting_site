@@ -1,10 +1,12 @@
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.db import models
 from django.dispatch import receiver
 from django.utils.text import slugify
 from django.db.models.signals import post_save
-import random
+import random, os
+from django.core.exceptions import ValidationError
 class Report(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
@@ -47,15 +49,53 @@ def create_or_update_user_profile(sender, instance, created, **kwargs):
         UserProfile.objects.create(user=instance)
     instance.userprofile.save()
 
+
+
+# Validators for file types
+def validate_video_extension(value):
+    ext = os.path.splitext(value.name)[1]  # Get the file extension
+    valid_extensions = ['.mp4', '.mov', '.avi', '.wmv']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError(u'Unsupported file extension.')
+
+def validate_image_extension(value):
+    ext = os.path.splitext(value.name)[1]
+    valid_extensions = ['.jpg', '.png', '.jpeg', '.gif', '.bmp']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError(u'Unsupported file extension.')
+
+def validate_audio_extension(value):
+    ext = os.path.splitext(value.name)[1]
+    valid_extensions = ['.mp3', '.wav', '.ogg', '.m4a', '.aac']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError(u'Unsupported file extension.')
+
+def validate_document_extension(value):
+    ext = os.path.splitext(value.name)[1]
+    valid_extensions = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx']
+    if not ext.lower() in valid_extensions:
+        raise ValidationError(u'Unsupported file extension.')
+
 class ChatMessage(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField(blank=True)
-    image = models.ImageField(upload_to='chat_images/', blank=True, null=True)
-    video = models.FileField(upload_to='chat_videos/', blank=True, null=True)
-    document = models.FileField(upload_to='chat_documents/', blank=True, null=True)
-    audio = models.FileField(upload_to='chat_audio/', blank=True, null=True)
+    image = models.FileField('ImageFile', upload_to='chat_images/', blank=True, null=True, validators=[validate_image_extension])
+    video = models.FileField('VideoFile', upload_to='chat_videos/', blank=True, null=True, validators=[validate_video_extension])
+    document = models.FileField('DocumentFile', upload_to='chat_documents/', blank=True, null=True, validators=[validate_document_extension])
+    audio = models.FileField('AudioFile', upload_to='chat_audio/', blank=True, null=True, validators=[validate_audio_extension])
     timestamp = models.DateTimeField(auto_now_add=True)
+    
+    def clean(self):
+         
+        # Custom validation to ensure only one file type is uploaded
+        file_fields = [self.video, self.image, self.document, self.audio]
+        file_count = sum(bool(field) for field in file_fields)
+        if file_count > 1:
+            raise ValidationError('You can only upload one type of file (video, image, document, or audio).')
+        
+    def save(self, *args, **kwargs):
+        self.clean()  # Call the custom validation method
+        super(ChatMessage, self).save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.user.username}: {self.text[:20]}..."
-    
+        return f"Message from {self.user.username}"
