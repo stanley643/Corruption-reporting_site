@@ -27,4 +27,9 @@ class ReportCreateView(CreateView):
         form.instance.reporter = self.request.user
         return super().form_valid(form)
     success_url = reverse_lazy('report-list')  # Redirect to the report list page after creation
-    
+
+
+def chat_room(request, room_name):
+    return render(request, 'reports/chat_room.html', {
+        'room_name': room_name
+    })
