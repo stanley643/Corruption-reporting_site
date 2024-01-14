@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView
-
+from django.urls import reverse_lazy
 # Create your views here.
 from rest_framework import generics
 from .models import Report
@@ -26,3 +26,5 @@ class ReportCreateView(CreateView):
     def form_valid(self, form):
         form.instance.reporter = self.request.user
         return super().form_valid(form)
+    success_url = reverse_lazy('report-list')  # Redirect to the report list page after creation
+    

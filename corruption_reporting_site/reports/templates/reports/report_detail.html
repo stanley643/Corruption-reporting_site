@@ -1,0 +1,23 @@
+<!-- reports/templates/reports/report_detail.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ report.title }}{% endblock title %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ report.title }}</h2>
+    <p><strong>Description:</strong> {{ report.description }}</p>
+    <p><strong>Reported by:</strong> {{ report.reporter.username }}</p>
+    <p><strong>Created on:</strong> {{ report.created_at|date:"N j, Y, P" }}</p>
+
+    {% if report.evidence_file %}
+    <div class="evidence">
+        <h5>Evidence File:</h5>
+        <a href="{{ report.evidence_file.url }}"
+        target="_blank">Download Evidence</a>
+    </div>
+    {% endif %}
+    <!-- You might want to include a button to go back to the report list -->
+<a href="{% url 'report-list' %}" class="btn btn-secondary">Back to Reports</a>
+</div>
+{% endblock content %}

@@ -4,6 +4,6 @@ from .views import ReportListCreate, ReportListView, ReportDetailView, ReportCre
 urlpatterns = [
     path('api/reports/', ReportListCreate.as_view(), name='report-list-create'),
     path('reports/', ReportListView.as_view(), name='report-list'),
-    path('reports/int:pk/', ReportDetailView.as_view(), name='report-detail'),
+    path('reports/<int:pk>/', ReportDetailView.as_view(), name='report-detail'),
     path('reports/new/', ReportCreateView.as_view(), name='report-create'),
 ]
