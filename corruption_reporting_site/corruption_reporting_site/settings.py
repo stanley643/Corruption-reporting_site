@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'channels',
-]
+ ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -95,6 +95,10 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+ # settings.py
+AUTH_USER_MODEL = 'reports.customuser'
+AUTHENTICATION_BACKENDS = ['path.to.backends.PhoneAuthenticationBackend']
+
 
 
 # Password validation

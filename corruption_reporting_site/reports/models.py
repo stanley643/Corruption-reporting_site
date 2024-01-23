@@ -1,18 +1,20 @@
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.db import models
 from django.dispatch import receiver
 from django.utils.text import slugify
 from django.db.models.signals import post_save
 import random, os
 from django.core.exceptions import ValidationError
+import hashlib
+from django.conf import settings
 class Report(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    reporter = models.ForeignKey(User, on_delete=models.CASCADE)
+    reporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     evidence_file = models.FileField(upload_to='evidences/')
 
 # Helper function to generate a random anonymous name
@@ -24,8 +26,25 @@ def generate_anonymous_name():
     number = random.randint(0, 999)
     return f"{adjective}{noun}{number}"
 
+
+
+class customuser(AbstractUser):
+    # Override the username field with the phone number
+    username = None
+    email = None
+    phone_number = models.CharField(max_length=50, unique=True)
+
+    USERNAME_FIELD = 'phone_number'
+    REQUIRED_FIELDS = []
+
+    def save(self, *args, **kwargs):
+        # Hash the phone number before saving
+        self.phone_number = hashlib.sha256(self.phone_number.encode()).hexdigest()
+        super().save(*args, **kwargs)
+
+
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=15, blank=True)
     address = models.CharField(max_length=255, blank=True)
     profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
@@ -77,7 +96,7 @@ def validate_document_extension(value):
         raise ValidationError(u'Unsupported file extension.')
 
 class ChatMessage(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     text = models.TextField(blank=True)
     image = models.FileField('ImageFile', upload_to='chat_images/', blank=True, null=True, validators=[validate_image_extension])
     video = models.FileField('VideoFile', upload_to='chat_videos/', blank=True, null=True, validators=[validate_video_extension])

@@ -1,0 +1,17 @@
+<!-- verify_code.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Verify Your Phone Number</h2>
+    <p>Please enter the verification code you received.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="code">Verification Code</label>
+            <input type="text" class="form-control" id="code" name="code" placeholder="Enter verification code">
+        </div>
+        <button type="submit" class="btn btn-primary">Verify</button>
+    </form>
+</div>
+{% endblock content %}
