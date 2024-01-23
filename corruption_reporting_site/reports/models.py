@@ -1,6 +1,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser
+
 from django.db import models
 from django.dispatch import receiver
 from django.utils.text import slugify
@@ -28,19 +29,26 @@ def generate_anonymous_name():
 
 
 
-#class CustomUser(AbstractUser):
+class CustomUser(AbstractUser):
     # Override the username field with the phone number
- #   username = None
-  #  email = None
-   # phone_number = models.CharField(max_length=50, unique=True)
+    username = None
+    email = None
+    phone_number = models.CharField(max_length=50, unique=True)
 
-#    USERNAME_FIELD = 'phone_number'
- #   REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'phone_number'
+    REQUIRED_FIELDS = []
 
-#    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):
         # Hash the phone number before saving
- #       self.phone_number = hashlib.sha256(self.phone_number.encode()).hexdigest()
-  #      super().save(*args, **kwargs)
+        self.phone_number = hashlib.sha256(self.phone_number.encode()).hexdigest()
+        super().save(*args, **kwargs)
+        
+    @property
+    def is_anonymous(self):
+        return False
+
+    def __str__(self):
+        return self.phone_number  # You might want to adjust this representation based on your requirements
 
 
 class UserProfile(models.Model):
@@ -51,7 +59,6 @@ class UserProfile(models.Model):
     anonymous_name = models.CharField(max_length=50, unique=True, blank=True)
 
     def save(self, *args, **kwargs):
-        self.phone_number = hashlib.sha256(self.phone_number.encode()).hexdigest()
         if not self.anonymous_name:
             # Generate a unique anonymous name
             self.anonymous_name = generate_anonymous_name()
@@ -59,6 +66,7 @@ class UserProfile(models.Model):
                 self.anonymous_name = generate_anonymous_name()
         super(UserProfile, self).save(*args, **kwargs)
 
+    
     def __str__(self):
         return self.user.username
 

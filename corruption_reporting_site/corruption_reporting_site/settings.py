@@ -96,7 +96,7 @@ DATABASES = {
     }
 }
  # settings.py
-AUTH_USER_MODEL = 'reports.customuser'
+AUTH_USER_MODEL = 'reports.CustomUser'
 AUTHENTICATION_BACKENDS = ['path.to.backends.PhoneAuthenticationBackend']
 
 

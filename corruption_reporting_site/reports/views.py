@@ -3,7 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 # Create your views here.
 from rest_framework import generics
-from .models import UserProfile, Report
+from .models import CustomUser, Report
 from .serializers import ReportSerializer
 import random
 
@@ -58,7 +58,7 @@ def verify_code(request):
         user_code = request.POST.get('code')
         if user_code == request.session.get('verification_code'):
             # Create the user account
-            UserProfile.objects.create_user(
+            CustomUser.objects.create_user(
                 phone_number=request.session['phone_number']
             )
             # Redirect to the login page or directly log the user in
