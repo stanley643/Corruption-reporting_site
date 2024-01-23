@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Report, UserProfile, ChatMessage, customuser
+from .models import Report, UserProfile, ChatMessage
 
 
 admin.site.register(Report)
 admin.site.register(UserProfile)
 admin.site.register(ChatMessage)
-admin.site.register(customuser)
+#admin.site.register(CustomUser)

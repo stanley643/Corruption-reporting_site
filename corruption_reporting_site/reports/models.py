@@ -28,19 +28,19 @@ def generate_anonymous_name():
 
 
 
-class customuser(AbstractUser):
+#class CustomUser(AbstractUser):
     # Override the username field with the phone number
-    username = None
-    email = None
-    phone_number = models.CharField(max_length=50, unique=True)
+ #   username = None
+  #  email = None
+   # phone_number = models.CharField(max_length=50, unique=True)
 
-    USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = []
+#    USERNAME_FIELD = 'phone_number'
+ #   REQUIRED_FIELDS = []
 
-    def save(self, *args, **kwargs):
+#    def save(self, *args, **kwargs):
         # Hash the phone number before saving
-        self.phone_number = hashlib.sha256(self.phone_number.encode()).hexdigest()
-        super().save(*args, **kwargs)
+ #       self.phone_number = hashlib.sha256(self.phone_number.encode()).hexdigest()
+  #      super().save(*args, **kwargs)
 
 
 class UserProfile(models.Model):
@@ -51,6 +51,7 @@ class UserProfile(models.Model):
     anonymous_name = models.CharField(max_length=50, unique=True, blank=True)
 
     def save(self, *args, **kwargs):
+        self.phone_number = hashlib.sha256(self.phone_number.encode()).hexdigest()
         if not self.anonymous_name:
             # Generate a unique anonymous name
             self.anonymous_name = generate_anonymous_name()
