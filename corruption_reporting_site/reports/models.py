@@ -1,7 +1,6 @@
 
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
-
+from django.contrib.auth.models import User, AbstractUser, BaseUserManager
 from django.db import models
 from django.dispatch import receiver
 from django.utils.text import slugify
@@ -27,16 +26,27 @@ def generate_anonymous_name():
     number = random.randint(0, 999)
     return f"{adjective}{noun}{number}"
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, phone_number, password=None, **extra_fields):
+        user = self.model(phone_number=phone_number, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
+    def create_superuser(self, phone_number, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        return self.create_user(phone_number, password, **extra_fields)
 
 class CustomUser(AbstractUser):
     # Override the username field with the phone number
-    username = None
+    username = models.CharField(max_length=15, unique=True)
     email = None
     phone_number = models.CharField(max_length=50, unique=True)
 
     USERNAME_FIELD = 'phone_number'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     def save(self, *args, **kwargs):
         # Hash the phone number before saving
