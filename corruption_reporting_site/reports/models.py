@@ -42,7 +42,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractUser):
     # Override the username field with the phone number
     username = models.CharField(max_length=15, unique=True)
-    email = None
+    email = models.CharField(max_length=100, unique=True, null=True)
     phone_number = models.CharField(max_length=50, unique=True)
 
     USERNAME_FIELD = 'phone_number'
