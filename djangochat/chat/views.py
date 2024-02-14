@@ -7,8 +7,13 @@ def home(request):
 
 
 def room(request, room):
-    username = request.GET.gert('username')
-    return render(request, 'room.html')
+    username = request.GET.get('username')
+    room_details = Room.objects.get(name=room)
+    return render(request, 'room.html', {
+        'username': username,
+        'room': room,
+        'room_details': room_details
+    })
 
 def checkview(request):
     room = request.POST['room_name']
@@ -18,6 +23,6 @@ def checkview(request):
         return redirect('/'+room+'/?username='+username)
     
     else:
-        new_room = Room.objects.Create(name=room)
+        new_room = Room.objects.create(name=room)
         new_room.save()
         return redirect('/'+room+'/?username='+username)
