@@ -1,0 +1,15 @@
+<!-- register.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report</title>
+</head>
+<body>
+    <h2>Report</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Report</button>
+    </form>
+</body>
+</html>
