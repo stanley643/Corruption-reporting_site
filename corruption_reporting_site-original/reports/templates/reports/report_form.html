@@ -1,0 +1,15 @@
+
+<!--3. `report_form.html` - Form for creating a new report: 
+
+```html -->
+<!-- templates/reports/report_form.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Create a New Report</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+  </form>
+{% endblock %}
