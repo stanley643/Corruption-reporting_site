@@ -3,9 +3,10 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 # Create your views here.
 from rest_framework import generics
-from .models import CustomUser, Report
+from .models import CustomUser, Report, Message
 from .serializers import ReportSerializer
 import random
+from django.http import HttpResponse, JsonResponse
 
 class ReportListCreate(generics.ListCreateAPIView):
     queryset = Report.objects.all()
@@ -68,4 +69,21 @@ def verify_code(request):
             pass
 
     return render(request, 'verify_code.html')
+
+
+def send(request):
+    message = request.POST['message']
+    username = request.POST['username']
+    room_id = request.POST['room_id']
+
+    new_message = Message.objects.create(value=message, user=username, room=room_id)
+    new_message.save()
+    return HttpResponse('Message sent successfully')
+
+
+def getMessages(request, room):
+    room_details = Report.objects.get(name=room)
+
+    messages = Message.objects.filter(room=room_details.id)
+    return JsonResponse({"messages":list(messages.values())})
 

@@ -114,7 +114,7 @@ def validate_document_extension(value):
     if not ext.lower() in valid_extensions:
         raise ValidationError(u'Unsupported file extension.')
 
-class ChatMessage(models.Model):
+class Message(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     text = models.TextField(blank=True)
     image = models.FileField('ImageFile', upload_to='chat_images/', blank=True, null=True, validators=[validate_image_extension])
@@ -133,7 +133,7 @@ class ChatMessage(models.Model):
         
     def save(self, *args, **kwargs):
         self.clean()  # Call the custom validation method
-        super(ChatMessage, self).save(*args, **kwargs)
+        super(Message, self).save(*args, **kwargs)
 
     def __str__(self):
         return f"Message from {self.user.username}"
