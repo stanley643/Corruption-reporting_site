@@ -2,7 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 import random, os
 # Create your models here.
-class post(models.Model):
+class Post(models.Model):
     title = models.CharField(max_length=200, null=False)
     evidence_file = models.FileField(upload_to='evidences/')
     description = models.TextField()
