@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView
 from .models import Post
 from .forms import PostForm
+from django.urls import reverse_lazy
 
 # View for displaying a list of posts
 class PostListView(ListView):
@@ -26,3 +27,6 @@ class PostCreateView(CreateView):
     def form_valid(self, form):
         # Perform additional actions if needed before saving the form
         return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy('post-list')
