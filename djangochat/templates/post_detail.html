@@ -1,11 +1,13 @@
 {% extends 'base.html' %}
 
+{% load custom_filters %} <!-- Load custom filters here -->
+
 {% block content %}
 <div class="container mt-5">
   <div class="card">
     <div class="card-body">
       <h5 class="card-title">{{ post.title }}</h5>
-      <div class="">{{ post.evidence_file}}</div>
+      <div class="">{{ post.evidence_file }}</div>
       <p class="card-text">{{ post.description }}</p>
       <p class="card-text">Created at: {{ post.created_at }}</p>
       <p class="card-text">Updated at: {{ post.updated_at }}</p>
@@ -13,44 +15,35 @@
     </div>
   </div>
 
-  <!-- Add the for loop here to iterate over the list of posts -->
+  <!-- Adjusted section to use the custom filter -->
   {% for post in posts %}
   <div class="post">
     <h2>{{ post.title }}</h2>
     <p>{{ post.content }}</p>
     
-    <!-- Get the file extension -->
-    {% with file_extension=post.evidence_file.url|lower %}
-        {% with file_name, file_ext = file_extension|splitext %}
-            <!-- Check if the evidence file is an image -->
-            {% if file_ext in ['.jpg', '.jpeg', '.png', '.gif'] %}
-                <img src="{{ post.evidence_file.url }}" alt="Evidence Image">
-            <!-- Check if the evidence file is a video -->
-            {% elif file_ext in ['.mp4', '.avi', '.mov'] %}
-                <video controls>
-                    <source src="{{ post.evidence_file.url }}" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            <!-- Check if the evidence file is audio -->
-            {% elif file_ext in ['.mp3', '.wav', '.ogg'] %}
-                <audio controls>
-                    <source src="{{ post.evidence_file.url }}" type="audio/mpeg">
-                    Your browser does not support the audio tag.
-                </audio>
-            <!-- Check if the evidence file is a document -->
-            {% elif file_ext in ['.docx', '.pdf', '.txt', '.doc'] %}
-                <a href="{{ post.evidence_file.url }}" target="_blank">View Document</a>
-            <!-- Default case: link to download the file -->
-            {% else %}
-                <a href="{{ post.evidence_file.url }}">Download Evidence File</a>
-            {% endif %}
-        {% endwith %}
+    {% with file_type=post.evidence_file.url|file_type %}
+        {% if file_type == 'image' %}
+            <img src="{{ post.evidence_file.url }}" alt="Evidence Image">
+        {% elif file_type == 'video' %}
+            <video controls>
+                <source src="{{ post.evidence_file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {% elif file_type == 'audio' %}
+            <audio controls>
+                <source src="{{ post.evidence_file.url }}" type="audio/mpeg">
+                Your browser does not support the audio tag.
+            </audio>
+        {% elif file_type == 'document' %}
+            <a href="{{ post.evidence_file.url }}" target="_blank">View Document</a>
+        {% else %}
+            <a href="{{ post.evidence_file.url }}">Download Evidence File</a>
+        {% endif %}
     {% endwith %}
   </div>
   {% endfor %}
 </div>
 {% endblock %}
-
 
 
 
