@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -113,6 +114,16 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+# Define the base directory of your project
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Define the media root directory
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+
+# Define the media URL
+MEDIA_URL = '/uploads/'
 
 
 # Static files (CSS, JavaScript, Images)

@@ -57,11 +57,13 @@ class Post(models.Model):
         ('video', 'Video'),
         ('audio', 'Audio'),
         ('picture', 'Picture'),
+        ('document', 'Document'),
     )
 
     title = models.CharField(max_length=100)
-    description = models.TextField()
     item_type = models.CharField(max_length=10, choices=ITEM_CHOICES)
+    file = models.FileField(upload_to='uploads/', blank=True, null=True)
+    description = models.TextField()
     time_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
