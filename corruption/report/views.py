@@ -47,7 +47,7 @@ def view_media(request, post_id):
             return render(request, 'report/view_picture.html', {'post': post})
         elif file_extension in ['mp4', 'webm', 'ogg']:
             # Resize video
-            resize_video(file_path, 640, 480)  # Adjust dimensions as needed
+            #resize_video(file_path, 640, 480)  # Adjust dimensions as needed
             return render(request, 'report/view_video.html', {'post': post})
         elif file_extension in ['mp3', 'wav', 'ogg']:
             # Audio file

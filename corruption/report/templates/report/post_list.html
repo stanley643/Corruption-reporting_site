@@ -9,8 +9,35 @@
     <h1>Post List</h1>
     <ul>
         {% for post in posts %}
-            <li><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></li>
+            <li>
+                <a href="{% url 'post_detail' pk=post.pk %}">
+                    <strong>{{ post.title }}</strong>
+                </a>
+                {% if post.file %}
+                    {% if post.file_type == 'picture' %}
+                        <img src="{{ post.file.url }}" width="200" height="auto" alt="Picture">
+                    {% elif post.file_type == 'video' %}
+                        <video width="200" height="auto" controls>
+                            <source src="{{ post.file.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    {% elif post.file_type == 'audio' %}
+                        <audio controls>
+                            <source src="{{ post.file.url }}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    {% endif %}
+                {% endif %}
+                <br>
+                {% if post.description|wordcount <= 15 %}
+                    {{ post.description }}
+                {% else %}
+                    {{ post.description|truncatewords:15 }}...
+                {% endif %}
+            </li>
         {% endfor %}
     </ul>
 </body>
 </html>
+
+

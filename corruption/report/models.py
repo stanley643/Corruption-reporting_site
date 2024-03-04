@@ -68,3 +68,13 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+
+class ChatRoom(models.Model):
+    post = models.OneToOneField('Post', on_delete=models.CASCADE)
+    unique_identifier = models.CharField(max_length=100, unique=True)
+
+class Message(models.Model):
+    chat_room = models.ForeignKey('ChatRoom', on_delete=models.CASCADE)
+    user = models.ForeignKey(AbstractBaseUser, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
