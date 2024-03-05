@@ -82,35 +82,3 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     });
 });
-
-document.getElementById('send-message-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    var messageContent = document.getElementById('message-input').value;
-    var senderUsername = '{{ request.user.username }}'; // Assuming user is authenticated
-    var chatRoomId = '{{ chat_room.id }}'; // Assuming chat room ID is passed in template
-    var timestamp = new Date().toISOString(); // Current timestamp
-
-    // AJAX request to send message
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/send-message/');
-    xhr.setRequestHeader('Content-Type', 'application/json');
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            // Message sent successfully, update chat interface
-            var message = {
-                content: messageContent,
-                sender: senderUsername,
-                timestamp: timestamp
-            };
-            displayMessage(message);
-            document.getElementById('message-input').value = ''; // Clear input field
-        }
-    };
-    xhr.send(JSON.stringify({content: messageContent, sender: senderUsername, chat_room_id: chatRoomId, timestamp: timestamp}));
-});
-
-function displayMessage(message) {
-    var messageElement = document.createElement('div');
-    messageElement.textContent = message.content + ' - ' + message.sender + ' (' + message.timestamp + ')';
-    document.getElementById('chat-messages').appendChild(messageElement);
-}

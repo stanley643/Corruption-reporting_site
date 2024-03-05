@@ -98,6 +98,7 @@ def send_message(request):
         user = request.user
         # Save the message
         message = Message.objects.create(user=user, post_id=post_id, content=message_content)
+        message.save()
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'error'})
 
@@ -107,3 +108,8 @@ def get_messages(request, post_id):
     # Format messages as JSON
     data = [{'user': message.user.username, 'content': message.content} for message in messages]
     return JsonResponse(data, safe=False)
+
+def chat_room_view(request, chat_room_id):
+    chat_room = ChatRoom.objects.get(id=chat_room_id)
+    messages = Message.objects.filter(chat_room=chat_room).order_by('timestamp')
+    return render(request, 'chat_room.html', {'chat_room': chat_room, 'messages': messages})
