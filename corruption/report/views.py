@@ -7,6 +7,7 @@ from .models import Post, ChatRoom, Message
 from PIL import Image
 import ffmpeg
 from django.contrib.auth.decorators import login_required
+from .templatetags.custom_filters import add_class
 
 
 def register(request):
@@ -19,7 +20,9 @@ def register(request):
             return redirect('login')  # Redirect to login page after successful registration
     else:
         form = UserRegistrationForm()
-    return render(request, 'report/register.html', {'form': form})
+    #return render(request, 'report/register.html', {'form': form})
+    return render(request, 'report/register.html', {'add_class': add_class})
+
 
 def post_list(request):
     posts = Post.objects.all()

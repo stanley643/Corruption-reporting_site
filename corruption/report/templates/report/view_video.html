@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Video</title>
-</head>
-<body>
+{% extends 'base.html' %}
+
+{% block title %}
+    View Video
+{% endblock %}
+
+{% block content %}
     <h1>{{ post.title }}</h1>
     <video controls>
         <source src="{{ post.file.url }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     <p>{{ post.description }}</p>
-</body>
-</html>
+{% endblock %}
