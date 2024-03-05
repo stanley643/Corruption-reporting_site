@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, User
+import uuid
 class UserManager(BaseUserManager):
     def create_user(self, email, username, password=None):
         if not email:
@@ -70,11 +70,18 @@ class Post(models.Model):
         return self.title
 
 class ChatRoom(models.Model):
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     post = models.OneToOneField('Post', on_delete=models.CASCADE)
-    unique_identifier = models.CharField(max_length=100, unique=True)
+    #unique_identifier = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return str(self.uuid)
 
 class Message(models.Model):
     chat_room = models.ForeignKey('ChatRoom', on_delete=models.CASCADE)
-    user = models.ForeignKey(AbstractBaseUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.sender.username} - {self.timestamp}'

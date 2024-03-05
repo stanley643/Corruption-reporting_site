@@ -6,9 +6,45 @@
     <title>{{ post.title }}</title>
 </head>
 <body>
+   <!-- <h1>{{ post.title }}</h1>
+    <p>{{ post.content }}</p>
+-->
+    <div>
     <h1>{{ post.title }}</h1>
+    <iframe src="{{ post.file.url }}" width="100%" height="500px"></iframe>
     <p>{{ post.description }}</p>
-    <p>Item Type: {{ post.item_type }}</p>
-    <p>Time Created: {{ post.time_created }}</p>
+    </div>
+    
+    <div>
+        <h2>Live Chat</h2>
+    <div id="chat-messages">
+        <!-- Messages will be loaded here -->
+    </div>
+    
+    <form id="chat-form">
+        <input type="text" id="message-input" placeholder="Type your message here...">
+        <button type="submit">Send</button>
+    </form>
+    </div>
+    
+    <!-- Chat input form --
+    <input type="hidden" id="post-id" value="{{ post.id }}">
+    <input type="text" id="message-input" placeholder="Type your message here...">
+    <button onclick="sendMessage()">Send</button> -->
+
+    <!-- Load initial messages -->
+    <script>
+        window.onload = function() {
+            loadMessages('{{ post.id }}');
+            setInterval(function() {
+                loadMessages('{{ post.id }}');
+            }, 5000); // Refresh messages every 5 seconds
+        };
+    </script>
+    {% load static %}
+    <script src="{% static 'report/live_chat.js' %}"></script>
+
 </body>
 </html>
+
+

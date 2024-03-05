@@ -1,11 +1,13 @@
-from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, FileResponse
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import HttpResponse, FileResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegistrationForm
-from .models import Post
+from .models import Post, ChatRoom, Message
 from PIL import Image
 import ffmpeg
+from django.contrib.auth.decorators import login_required
+
 
 def register(request):
     if request.method == 'POST':
@@ -66,3 +68,42 @@ def serve_media(request, post_id):
         return FileResponse(open(post.file.path, 'rb'))
     else:
         return render(request, 'report/file_not_found.html')
+    
+
+
+@login_required
+def post_detail(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    
+    # Check if a chat room already exists for the post
+    chat_room, created = ChatRoom.objects.get_or_create(post=post)
+    
+    if created:
+        # Perform any additional initialization for the newly created chat room
+        # For example: You can set initial messages, configure chat settings, etc.
+        pass
+    
+    # Retrieve messages associated with the chat room
+    messages = chat_room.message_set.all()
+    
+    return render(request, 'report/post_detail.html', {'post': post, 'messages': messages})
+
+
+def send_message(request):
+    if request.method == 'POST':
+        # Create a new message
+        message_content = request.POST.get('message')
+        post_id = request.POST.get('post_id')
+        # Assuming you have authentication set up, you can get the current user
+        user = request.user
+        # Save the message
+        message = Message.objects.create(user=user, post_id=post_id, content=message_content)
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'error'})
+
+def get_messages(request, post_id):
+    # Retrieve messages for the given post_id
+    messages = Message.objects.filter(post_id=post_id).order_by('created_at')
+    # Format messages as JSON
+    data = [{'user': message.user.username, 'content': message.content} for message in messages]
+    return JsonResponse(data, safe=False)
