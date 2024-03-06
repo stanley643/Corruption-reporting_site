@@ -7,6 +7,7 @@ from .models import Post, ChatRoom, Message
 from PIL import Image
 import ffmpeg
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from .templatetags.custom_filters import add_class
 
 
@@ -101,3 +102,16 @@ def chat_room_view(request, chat_room_id):
     chat_room = ChatRoom.objects.get(id=chat_room_id)
     messages = Message.objects.filter(chat_room=chat_room).order_by('timestamp')
     return render(request, 'chat_room.html', {'chat_room': chat_room, 'messages': messages})
+
+
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('post_list')
+        else:
+            messages.error(request, 'Invalid username or password')
+    return render(request, 'login.html')
