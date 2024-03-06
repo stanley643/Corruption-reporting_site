@@ -3,7 +3,6 @@
 {% block title %}User Registration{% endblock %}
 
 {% block content %}
-
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -12,21 +11,34 @@
                     <h2 class="card-title text-center mb-4">User Registration</h2>
                     <form method="post">
                         {% csrf_token %}
-                        <div class="form-group">
-                            {{ form.username.label_tag }}
-                            {{ form.username|add_class:'form-control' }}
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" name="username" class="form-control" id="username">
+                            {% if form.username.errors %}
+                                <p class="text-danger">{{ form.username.errors }}</p>
+                            {% endif %}
                         </div>
-                        <div class="form-group">
-                            {{ form.email.label_tag }}
-                            {{ form.email|add_class:'form-control' }}
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" id="email">
+                            {% if form.email.errors %}
+                                <p class="text-danger">{{ form.email.errors }}</p>
+                            {% endif %}
                         </div>
-                        <div class="form-group">
-                            {{ form.password1.label_tag }}
-                            {{ form.password1|add_class:'form-control' }}
+                        <div class="mb-3">
+                            <label for="password1" class="form-label">Password</label>
+                            <input type="password" name="password1" class="form-control" id="password1">
+                            {% if form.password1.errors %}
+                                <p class="text-danger">{{ form.password1.errors }}</p>
+                            {% endif %}
                         </div>
-                        <div class="form-group">
-                            {{ form.password2.label_tag }}
-                            {{ form.password2|add_class:'form-control' }}
+                        <div class="mb-3">
+                            <label for="password2" class="form-label">Confirm Password</label>
+                            <input type="password" name="password2" class="form-control" id="password2">
+                            {% if form.password2.errors %}
+                                <p class="text-danger">{{ form.password2.errors }}</p>
+                            {% endif %}
                         </div>
                         <button type="submit" class="btn btn-primary btn-block">Register</button>
                     </form>

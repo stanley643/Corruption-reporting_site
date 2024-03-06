@@ -1,46 +1,32 @@
+<!-- report/post_list.html -->
 {% extends 'base.html' %}
 
-{% block title %}
-    Post List
-{% endblock %}
+{% block title %}Post List{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1 class="mt-5 mb-4">Post List</h1>
-        <div class="row">
-            <ul class="list-group">
-                {% for post in posts %}
-                    <li class="list-group-item">
-                        <a href="{% url 'post_detail' pk=post.pk %}">
-                            <strong>{{ post.title }}</strong>
-                        </a>
-                        {% if post.file %}
-                            {% if post.file_type == 'picture' %}
-                                <img src="{{ post.file.url }}" class="img-fluid" alt="Picture">
-                            {% elif post.file_type == 'video' %}
-                                <video class="img-fluid" controls>
-                                    <source src="{{ post.file.url }}" type="video/mp4">
-                                    Your browser does not support the video tag.
-                                </video>
-                            {% elif post.file_type == 'audio' %}
-                                <audio controls>
-                                    <source src="{{ post.file.url }}" type="audio/mpeg">
-                                    Your browser does not support the audio element.
-                                </audio>
-                            {% endif %}
-                        {% endif %}
-                        <br>
-                        {% if post.description|wordcount <= 15 %}
-                            {{ post.description }}
-                        {% else %}
-                            {{ post.description|truncatewords:15 }}...
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
+<div class="container">
+    <h1 class="mt-5">Post List</h1>
+    <div class="list-group mt-3">
+        {% for post in posts %}
+            <div class="list-group-item">
+                <h3>{{ post.title }}</h3>
+                {% if post.file %}
+                    {% if post.file_type == 'picture' %}
+                        <img src="{{ post.file.url }}" alt="{{ post.title }}" class="img-fluid mb-3">
+                    {% elif post.file_type == 'video' %}
+                        <video src="{{ post.file.url }}" controls class="img-fluid mb-3"></video>
+                    {% elif post.file_type == 'audio' %}
+                        <audio src="{{ post.file.url }}" controls class="mb-3"></audio>
+                    {% endif %}
+                {% endif %}
+                <p>{{ post.description }}</p>
+                <p><strong>Created at:</strong> {{ post.created_at }}</p>
+            </div>
+        {% endfor %}
     </div>
+</div>
 {% endblock %}
+
 
 
 
