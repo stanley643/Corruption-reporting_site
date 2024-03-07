@@ -1,4 +1,5 @@
-{% extends 'base.html' %}
+<!-- register.html -->
+{% extends 'landing.html' %}
 
 {% block title %}User Registration{% endblock %}
 
@@ -44,6 +45,11 @@
                     </form>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="row justify-content-center mt-3">
+        <div class="col-md-6 text-center">
+            <p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
         </div>
     </div>
 </div>

@@ -3,13 +3,14 @@ from django.http import HttpResponse, FileResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import UserRegistrationForm
-from .models import Post, ChatRoom, Message
+from .models import Post, ChatRoom, Message, UserAuthentication
 from PIL import Image
 import ffmpeg
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .templatetags.custom_filters import add_class
 from .forms import PostForm
+from django.utils import timezone
 
 
 def register(request):
@@ -81,16 +82,26 @@ def post_detail(request, pk):
 
 def send_message(request):
     if request.method == 'POST':
-        # Create a new message
+        # Get the message content and post ID from the POST data
         message_content = request.POST.get('message')
         post_id = request.POST.get('post_id')
+        
         # Assuming you have authentication set up, you can get the current user
         user = request.user
-        # Save the message
-        message = Message.objects.create(user=user, post_id=post_id, content=message_content)
-        message.save()
+        
+        # Create a new message object and save it to the database
+        message = Message.objects.create(
+            user=user,
+            content=message_content,
+            post_id=post_id,
+            created_at=timezone.now()
+        )
+        
+        # Return a JSON response indicating success
         return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'error'})
+    else:
+        # If the request method is not POST, return an error response
+        return JsonResponse({'status': 'error', 'message': 'Only POST requests are allowed'})
 
 def get_messages(request, post_id):
     # Retrieve messages for the given post_id
@@ -127,3 +138,40 @@ def create_post(request):
     else:
         form = PostForm()
     return render(request, 'report/create_post.html', {'form': form})
+
+
+
+def landing_page(request):
+    # Fetch data for statistics
+    registered_users_over_time = get_registered_users_over_time()
+    posted_cases_over_time = get_posted_cases_over_time()
+    cases_attracting_users = get_cases_attracting_users()
+
+    # Pass data to the template
+    return render(request, 'landing.html', {
+        'registered_users_over_time': registered_users_over_time,
+        'posted_cases_over_time': posted_cases_over_time,
+        'cases_attracting_users': cases_attracting_users,
+    })
+
+def get_registered_users_over_time():
+    # Query the database for registered users over time
+    registered_users_over_time = UserAuthentication.objects.all()  # Example queryset, replace with your actual queryset
+    return registered_users_over_time
+
+def get_posted_cases_over_time():
+    # Query the database for posted cases over time
+    posted_cases_over_time = Post.objects.all()  # Example queryset, replace with your actual queryset
+    return posted_cases_over_time
+
+def get_cases_attracting_users():
+    # Query the database for cases attracting users
+    cases_attracting_users = Message.objects.all()  # Example queryset, replace with your actual queryset
+    return cases_attracting_users
+
+
+def logout_view(request):
+    logout(request)
+    # Redirect to a specific page after logout, or wherever you want
+    return redirect('landing_page')
+
