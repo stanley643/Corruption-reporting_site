@@ -9,6 +9,7 @@ import ffmpeg
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from .templatetags.custom_filters import add_class
+from .forms import PostForm
 
 
 def register(request):
@@ -111,7 +112,18 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('post_list')
+            return redirect('view_media')
         else:
             messages.error(request, 'Invalid username or password')
-    return render(request, 'login.html')
+    return render(request, 'report/login.html')
+    
+
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('view_media')  # Redirect to a page displaying all posts
+    else:
+        form = PostForm()
+    return render(request, 'report/create_post.html', {'form': form})
