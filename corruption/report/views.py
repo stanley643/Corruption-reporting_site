@@ -1,3 +1,4 @@
+import io
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, FileResponse, JsonResponse
 from django.shortcuts import render, redirect
@@ -6,6 +7,9 @@ from .forms import UserRegistrationForm
 from .models import Post, ChatRoom, Message, UserAuthentication
 from PIL import Image
 import ffmpeg
+from moviepy.editor import VideoFileClip
+import PyPDF2
+import os
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from .templatetags.custom_filters import add_class
@@ -133,6 +137,9 @@ def create_post(request):
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
+            # Resize each uploaded file before saving
+            for field_name, file_obj in request.FILES.items():
+                resize_file(file_obj)  # Resize the file
             form.save()
             return redirect('view_media')  # Redirect to a page displaying all posts
     else:
@@ -175,3 +182,51 @@ def logout_view(request):
     # Redirect to a specific page after logout, or wherever you want
     return redirect('landing_page')
 
+
+#resizing
+def resize_file(file_content, target_size=(640, 480)):
+    # Get the file extension from the content type
+    content_type = file_content.content_type
+    file_extension = None
+    if content_type.startswith('image'):
+        file_extension = '.jpg'
+    elif content_type.startswith('video'):
+        file_extension = '.mp4'
+    elif content_type == 'application/pdf':
+        file_extension = '.pdf'
+    elif content_type == 'image/svg+xml':
+        # Handle SVG files separately
+        # You can skip resizing or handle them using a different approach
+        return file_content
+
+    # Resize based on file type
+    if file_extension in ['.jpg', '.jpeg', '.png', '.gif']:
+        # Resize image
+        with Image.open(file_content) as img:
+            if img.size != target_size:
+                img_resized = img.resize(target_size)
+                return img_resized
+            else:
+                return img
+    elif file_extension in ['.mp4', '.avi', '.mov']:
+        # Resize video
+        clip = VideoFileClip(file_content)
+        if clip.size != target_size:
+            resized_clip = clip.resize(target_size)
+            return resized_clip
+        else:
+            return clip
+    elif file_extension == '.pdf':
+        # Compress PDF
+        pdf_reader = PyPDF2.PdfFileReader(file_content)
+        pdf_writer = PyPDF2.PdfFileWriter()
+        for page_num in range(pdf_reader.numPages):
+            page = pdf_reader.getPage(page_num)
+            page.compressContentStreams()  # Compress page content
+            pdf_writer.addPage(page)
+        
+        # Write compressed PDF content to a BytesIO object
+        output_file = io.BytesIO()
+        pdf_writer.write(output_file)
+        output_file.seek(0)
+        return output_file
