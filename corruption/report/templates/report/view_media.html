@@ -1,28 +1,58 @@
+<!-- report/view_media.html -->
 {% extends 'base.html' %}
 
-{% block title %}Media View{% endblock %}
+{% block title %}Post List{% endblock %}
+
+{% block styles %}
+{% load static %}
+<style>
+    body {
+        background-image: url("{% static 'report/static/images/court.png' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid bg-corruption py-4">
-    <!-- Create Post Icon -->
-    <a href="{% url 'create_post' %}" title="Create Post" class="position-fixed end-0 top-0 p-3">
-        <i class="fas fa-plus-circle fa-3x text-primary" aria-hidden="true"></i>
-    </a>
-    
-    <div class="row justify-content-start">
-        {% for post in posts reversed %}
-            <div class="col-md-4 mb-4">
-                <div class="post bg-white shadow p-4">
-                    <h3><a href="{% if user.is_authenticated %}{% url 'post_detail' post.id %}{% else %}{% url 'login' %}?next={{ request.path }}{% endif %}">{{ post.title }}</a></h3>
-                    {% if post.file %}
-                        <p>File: <a href="{{ post.file.url }}">{{ post.file.name }}</a></p>
-                    {% else %}
-                        <p>No file attached</p>
-                    {% endif %}
-                    <p>{{ post.description|truncatechars:100 }}<a href="{% if user.is_authenticated %}{% url 'post_detail' post.id %}{% else %}{% url 'login' %}?next={{ request.path }}{% endif %}" class="text-primary">{% if post.description|length > 100 %}Read more{% endif %}</a></p> <!-- Limiting description to 100 characters -->
-                    <p>Created at: {{ post.time_created}}</p>
-                    <p></p>
-                </div>
+<div class="container">
+    <h1 class="mt-5">Post List</h1>
+    <div class="list-group mt-3">
+        {% for post in posts %}
+            <div class="list-group-item">
+                <table>
+                    <tr>
+                        <td><a href="{% url 'post_detail' post.id %}"><h3>{{ post.title }}</h3></a></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if post.file %}
+                                {% if post.file_type == 'picture' %}
+                                    <img src="{{ post.file.url }}" alt="{{ post.title }}" class="img-fluid mb-3">
+                                {% elif post.file_type == 'video' %}
+                                    <video src="{{ post.file.url }}" controls class="img-fluid mb-3"></video>
+                                {% elif post.file_type == 'audio' %}
+                                    <audio src="{{ post.file.url }}" controls class="mb-3"></audio>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p>
+                                {{ post.short_description }}
+                                {% if post.description|length > 100 %}
+                                    <a href="{% url 'post_detail' post.id %}">Read more</a>
+                                {% endif %}
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><p><strong>Created at:</strong> {{ post.time_created }}</p></td>
+                    </tr>
+                </table>
             </div>
         {% endfor %}
     </div>

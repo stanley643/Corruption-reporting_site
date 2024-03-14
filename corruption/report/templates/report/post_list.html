@@ -9,18 +9,30 @@
     <div class="list-group mt-3">
         {% for post in posts %}
             <div class="list-group-item">
-                <h3>{{ post.title }}</h3>
-                {% if post.file %}
-                    {% if post.file_type == 'picture' %}
-                        <img src="{{ post.file.url }}" alt="{{ post.title }}" class="img-fluid mb-3">
-                    {% elif post.file_type == 'video' %}
-                        <video src="{{ post.file.url }}" controls class="img-fluid mb-3"></video>
-                    {% elif post.file_type == 'audio' %}
-                        <audio src="{{ post.file.url }}" controls class="mb-3"></audio>
-                    {% endif %}
-                {% endif %}
-                <p>{{ post.description }}</p>
-                <p><strong>Created at:</strong> {{ post.created_at }}</p>
+                <table>
+                    <tr>
+                        <td><h3>{{ post.title }}</h3></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            {% if post.file %}
+                                {% if post.file_type == 'picture' %}
+                                    <img src="{{ post.file.url }}" alt="{{ post.title }}" class="img-fluid mb-3">
+                                {% elif post.file_type == 'video' %}
+                                    <video src="{{ post.file.url }}" controls class="img-fluid mb-3"></video>
+                                {% elif post.file_type == 'audio' %}
+                                    <audio src="{{ post.file.url }}" controls class="mb-3"></audio>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><p>{{ post.description }}</p></td>
+                    </tr>
+                    <tr>
+                        <td><p><strong>Created at:</strong> {{ post.created_at }}</p></td>
+                    </tr>
+                </table>
             </div>
         {% endfor %}
     </div>

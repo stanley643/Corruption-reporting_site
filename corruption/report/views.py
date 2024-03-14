@@ -15,6 +15,7 @@ from django.contrib.auth import authenticate, login, logout
 from .templatetags.custom_filters import add_class
 from .forms import PostForm
 from django.utils import timezone
+from django.template.defaultfilters import truncatechars
 
 
 def register(request):
@@ -54,6 +55,8 @@ from .models import Post
 
 def view_media(request):
     posts = Post.objects.all()
+    for post in posts:
+        post.short_description = truncatechars(post.description, 100)
     return render(request, 'report/view_media.html', {'posts': posts})
 
 
