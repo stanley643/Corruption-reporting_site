@@ -68,7 +68,7 @@
           <a class="nav-link" href="#contact">Contact</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'login' %}">Login</a>
+          <a class="nav-link" href="#login">Login</a>
         </li>
       </ul>
     </div>
@@ -179,15 +179,17 @@
   </div>
 </section>
 
-<div class="container mt-5">
-        <div class="row">
-            <div class="col">
-                {% block content %}
+<section id="login" class="mt-5">
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Login</h2>
+      {% block content %}
                     <!-- Content of child templates will be placed here -->
-                {% endblock %}
-            </div>
-        </div>
+      {% endblock %}
     </div>
+  </div>
+</section>
+
 
 
 <!-- Footer Section -->

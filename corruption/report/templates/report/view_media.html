@@ -6,8 +6,11 @@
 {% block styles %}
 {% load static %}
 <style>
+      .action-row {
+        text-align: right;
+      }
     body {
-        background-image: url("{% static 'report/static/images/court.png' %}");
+        background-image: url("{% static 'report/static/images/court.png' %}"), linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5));
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -17,7 +20,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+
+
+<div class="container" style="background-color: #1d663b;">
     <h1 class="mt-5">Post List</h1>
     <div class="list-group mt-3">
         {% for post in posts %}
@@ -49,8 +54,14 @@
                             </p>
                         </td>
                     </tr>
-                    <tr>
-                        <td><p><strong>Created at:</strong> {{ post.time_created }}</p></td>
+                    <tr class="action-row">
+                        <td>
+                            <select onchange="window.location.href=this.value;">
+                                <option value="#">Choose an action</option>
+                                <option value="{% url 'post_detail' post.id %}">Chat</option>
+                                <option value="{% url 'create_post' %}">Create New Post</option>
+                            </select>
+                        </td>
                     </tr>
                 </table>
             </div>
