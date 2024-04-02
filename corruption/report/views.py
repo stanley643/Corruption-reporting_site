@@ -111,11 +111,12 @@ def send_message(request):
         return JsonResponse({'status': 'error', 'message': 'Only POST requests are allowed'})
 
 def get_messages(request, post_id):
-    # Retrieve messages for the given post_id
-    messages = Message.objects.filter(post_id=post_id).order_by('created_at')
-    # Format messages as JSON
-    data = [{'user': message.user.username, 'content': message.content} for message in messages]
-    return JsonResponse(data, safe=False)
+    if request.method == 'GET':
+        # Retrieve messages for the given post_id
+        messages = Message.objects.filter(post_id=post_id).order_by('created_at')
+        # Format messages as JSON
+        data = [{'user': message.user.username, 'content': message.content} for message in messages]
+        return JsonResponse(data, safe=False)
 
 def chat_room_view(request, chat_room_id):
     chat_room = ChatRoom.objects.get(id=chat_room_id)
