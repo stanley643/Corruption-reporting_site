@@ -88,27 +88,13 @@ def post_detail(request, pk):
 
 
 def send_message(request):
-    if request.method == 'POST':
-        # Get the message content and post ID from the POST data
-        message_content = request.POST.get('message')
-        post_id = request.POST.get('post_id')
-        
-        # Assuming you have authentication set up, you can get the current user
-        user = request.user
-        
-        # Create a new message object and save it to the database
-        message = Message.objects.create(
-            user=user,
-            content=message_content,
-            post_id=post_id,
-            created_at=timezone.now()
-        )
-        
-        # Return a JSON response indicating success
-        return JsonResponse({'status': 'success'})
-    else:
-        # If the request method is not POST, return an error response
-        return JsonResponse({'status': 'error', 'message': 'Only POST requests are allowed'})
+        message = request.POST['message']
+        username = request.POST['username']
+        room_id = request.POST['post_id']
+
+        new_message = Message.objects.create(value=message, user=username, room=room_id)
+        new_message.save()
+        return HttpResponse('Message sent successfully')
 
 def get_messages(request, post_id):
     if request.method == 'GET':
