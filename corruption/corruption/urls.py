@@ -20,7 +20,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('report.urls'))
+    path('', include('report.urls')),
+     path('', include('chat.urls')),
+    path('', include('report.urls')),
 ]
 
 # Serve media files in development

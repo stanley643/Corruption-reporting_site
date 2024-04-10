@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% load custom_filters %} <!-- Load custom filters here -->
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{ post.title }}</h5>
+      <div class="">{{ post.evidence_file }}</div>
+      <p class="card-text">{{ post.description }}</p>
+      <p class="card-text">Created at: {{ post.created_at }}</p>
+      <p class="card-text">Updated at: {{ post.updated_at }}</p>
+      <a href="{% url 'post-list' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+  </div>
+
+  <!-- Adjusted section to use the custom filter -->
+  {% for post in posts %}
+  <div class="post">
+    <h2>{{ post.title }}</h2>
+    <p>{{ post.content }}</p>
+    
+    {% with file_type=post.evidence_file.url|file_type %}
+        {% if file_type == 'image' %}
+            <img src="{{ post.evidence_file.url }}" alt="Evidence Image">
+        {% elif file_type == 'video' %}
+            <video controls>
+                <source src="{{ post.evidence_file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        {% elif file_type == 'audio' %}
+            <audio controls>
+                <source src="{{ post.evidence_file.url }}" type="audio/mpeg">
+                Your browser does not support the audio tag.
+            </audio>
+        {% elif file_type == 'document' %}
+            <a href="{{ post.evidence_file.url }}" target="_blank">View Document</a>
+        {% else %}
+            <a href="{{ post.evidence_file.url }}">Download Evidence File</a>
+        {% endif %}
+    {% endwith %}
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+
+
+
+<!-- post_detail.html 
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{ post.title }}</h5>
+      <div class="">{{ post.evidence_file}}</div>
+      <p class="card-text">{{ post.description }}</p>
+      <p class="card-text">Created at: {{ post.created_at }}</p>
+      <p class="card-text">Updated at: {{ post.updated_at }}</p>
+      <a href="{% url 'post-list' %}" class="btn btn-secondary">Back to List</a>
+    </div>
+  </div>
+</div>
+{% endblock %} -->
